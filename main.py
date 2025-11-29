@@ -1,16 +1,29 @@
-# This is a sample Python script.
+import kagglehub
+import os
+import pandas as pd
+import numpy as np
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+# Download latest version
+path = kagglehub.dataset_download("suraj520/cellular-network-analysis-dataset")
+files = os.listdir(path)
+csv_files = [f for f in files if f.endswith(".csv")]
 
+# Load the CSV file
+file_path = os.path.join(path, csv_files[0])
+df = pd.read_csv(file_path)
+pd.set_option('display.max_columns', None)
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+# Data investigation and preprocessing
+df_clean = df.copy()
+cols_to_remove = [
+    'Locality',  # String/categorical
+    'Signal Quality (%)',  # All zeros (no variance)
+    'srsRAN Measurement (dBm)',  # Highly correlated with others
+    'BladeRFxA9 Measurement (dBm)'  # Highly correlated with others
+]
 
+cols_actually_removed = [col for col in cols_to_remove if col in df_clean.columns]
+df_clean = df_clean.drop(columns=cols_actually_removed, errors='ignore')
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+print("\nCleaned dataframe info:")
+print(df_clean.info())
