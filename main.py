@@ -1,29 +1,33 @@
 import kagglehub
 import os
 import pandas as pd
-import numpy as np
+from sklearn.model_selection import train_test_split
+from preprocess import preprocess_data
+from linearregression import LinearRegressionModel
 
-# Download latest version
+# Download and load data
 path = kagglehub.dataset_download("suraj520/cellular-network-analysis-dataset")
 files = os.listdir(path)
 csv_files = [f for f in files if f.endswith(".csv")]
-
-# Load the CSV file
 file_path = os.path.join(path, csv_files[0])
 df = pd.read_csv(file_path)
-pd.set_option('display.max_columns', None)
 
-# Data investigation and preprocessing
-df_clean = df.copy()
-cols_to_remove = [
-    'Locality',  # String/categorical
-    'Signal Quality (%)',  # All zeros (no variance)
-    'srsRAN Measurement (dBm)',  # Highly correlated with others
-    'BladeRFxA9 Measurement (dBm)'  # Highly correlated with others
-]
+# Preprocess data
+print("Preprocessing data...")
+X, y = preprocess_data(df)
 
-cols_actually_removed = [col for col in cols_to_remove if col in df_clean.columns]
-df_clean = df_clean.drop(columns=cols_actually_removed, errors='ignore')
+print(f"\nPreprocessed X shape: {X.shape}")
+print(f"X columns: {list(X.columns)}")
+print(f"y shape: {y.shape}")
 
-print("\nCleaned dataframe info:")
-print(df_clean.info())
+# Split into train and test
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# ========================================
+# SELECT MODEL TO RUN
+# ========================================
+
+# Model 1: Linear Regression
+model = LinearRegressionModel()

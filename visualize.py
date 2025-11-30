@@ -15,6 +15,7 @@ csv_files = [f for f in files if f.endswith(".csv")]
 file_path = os.path.join(path, csv_files[0])
 df = pd.read_csv(file_path)
 
+
 # Correlation heatmap visualization
 # Select only numeric columns
 numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
