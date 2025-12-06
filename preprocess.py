@@ -1,35 +1,47 @@
 import pandas as pd
+import numpy as np
+
 def preprocess_data(df):
     df_clean = df.copy()
-    
-    # Step 1: Remove unwanted columns
-    cols_to_remove = [
-        'Locality',  # String/categorical
-        'Signal Quality (%)',  # All zeros (no variance)
-        'srsRAN Measurement (dBm)',  # Highly correlated with others
-        'BladeRFxA9 Measurement (dBm)'  # Highly correlated with others
-    ]
-    
-    cols_actually_removed = [col for col in cols_to_remove if col in df_clean.columns]
-    df_clean = df_clean.drop(columns=cols_actually_removed, errors='ignore')
-    
-    # Step 2: Split features and target
-    X = df_clean.drop(columns=['Data Throughput (Mbps)'])
-    y = df_clean['Data Throughput (Mbps)']
-    
-    # Step 3: Extract time features from Timestamp
-    if 'Timestamp' in X.columns:
-        X['Timestamp'] = pd.to_datetime(X['Timestamp'])
-        X['Year'] = X['Timestamp'].dt.year
-        X['Month'] = X['Timestamp'].dt.month
-        X['Day'] = X['Timestamp'].dt.day
-        X['Hour'] = X['Timestamp'].dt.hour
-        X['DayOfWeek'] = X['Timestamp'].dt.dayofweek  # 0=Monday, 6=Sunday
-        X = X.drop(columns=['Timestamp'])
-    
-    # Step 4: Encode categorical variables
-    if 'Network Type' in X.columns:
-        X = pd.get_dummies(X, columns=['Network Type'], drop_first=True)
-    
-    return X, y
 
+    df_clean = df_clean[df_clean["State"] == "D"]
+    cols_to_drop = [
+        "Operatorname",
+        "CellID",
+        "UL_bitrate",
+        "source_file",
+        "State",
+    ]
+    df_clean = df_clean.drop(columns=cols_to_drop, errors='ignore')
+
+    numeric_cols = [
+        "RSRQ", "SNR", "CQI", "RSSI",
+        "NRxRSRP", "NRxRSRQ",
+        "ServingCell_Lon", "ServingCell_Lat", "ServingCell_Distance"
+    ]
+
+    for col in numeric_cols:
+        df_clean[col] = pd.to_numeric(df_clean[col], errors="coerce")
+
+    # clean impossible values
+    df_clean["RSRQ"] = df_clean["RSRQ"].astype(float)
+    df_clean.loc[df_clean["RSRQ"] > -2, "RSRQ"] = np.nan
+    df_clean["ServingCell_Distance"] = df_clean["ServingCell_Distance"].astype(float)
+    df_clean = df_clean[df_clean["ServingCell_Distance"] < 50000]  # remove bad values
+
+    y = df_clean['DL_bitrate'] / 1000.0  # Convert kbit/s to Mbps
+    X = df_clean.drop(columns=['DL_bitrate'], errors='ignore')
+
+    # extract time features from Timestamp
+    X['Timestamp'] = pd.to_datetime(X['Timestamp'], format="%Y.%m.%d_%H.%M.%S")
+    X['Day'] = X['Timestamp'].dt.day
+    X['Hour'] = X['Timestamp'].dt.hour
+    X['DayOfWeek'] = X['Timestamp'].dt.dayofweek
+    X = X.drop(columns=['Timestamp'])
+
+    X = pd.get_dummies(X, columns=["NetworkMode"], drop_first=False)
+
+    dummy_cols = [col for col in X.columns if col.startswith("NetworkMode_")]
+    X[dummy_cols] = X[dummy_cols].astype(int)
+
+    return X, y

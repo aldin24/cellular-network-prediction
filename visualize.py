@@ -34,9 +34,7 @@ plt.show()
 # Focused view: Correlations with Data Throughput
 target = 'Data Throughput (Mbps)'
 if target in numeric_cols:
-    # Get correlations with target and sort
     correlations_with_target = df[numeric_cols].corr()[target].sort_values(ascending=False)
-    # Remove the target itself (it will be 1.0)
     correlations_with_target = correlations_with_target[correlations_with_target.index != target]
     
     # Create bar plot
