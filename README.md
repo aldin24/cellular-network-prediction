@@ -5,23 +5,23 @@ This repository contains the full implementation of a research study comparing t
 The goal is to evaluate whether deep learning (LSTM, GRU, CNN, CNN–LSTM) can outperform classical ML methods (Linear Regression, Decision Trees, Random Forests, XGBoost) when applied to small real-world cellular measurement datasets.
 
 📁 Repository Structure
-├── data_loader.py
-├── preprocess_shared.py
-├── preprocess_deep.py
-├── regression_models/
-│   ├── linear_regression.py
-│   ├── decision_tree.py
-│   ├── random_forest.py
-│   ├── xgboost_model.py
-├── deep_models/
-│   ├── cnn.py
-│   ├── gru.py
-│   ├── lstm.py
-│   ├── cnn_lstm.py
-├── main_regression.py
-├── main_deep.py
-├── README.md
-└── requirements.txt
+  ├── data_loader.py
+  ├── preprocess_shared.py
+  ├── preprocess_deep.py
+  ├── regression_models/
+  │   ├── linear_regression.py
+  │   ├── decision_tree.py
+  │   ├── random_forest.py
+  │   ├── xgboost_model.py
+  ├── deep_models/
+  │   ├── cnn.py
+  │   ├── gru.py
+  │   ├── lstm.py
+  │   ├── cnn_lstm.py
+  ├── main_regression.py
+  ├── main_deep.py
+  ├── README.md
+  └── requirements.txt
 
 🚀 1. Overview
 
