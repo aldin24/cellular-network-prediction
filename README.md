@@ -4,36 +4,17 @@ This repository contains the full implementation of a research study comparing t
 
 The goal is to evaluate whether deep learning (LSTM, GRU, CNN, CNN–LSTM) can outperform classical ML methods (Linear Regression, Decision Trees, Random Forests, XGBoost) when applied to small real-world cellular measurement datasets.
 
-📁 Repository Structure
-  ├── data_loader.py
-  ├── preprocess_shared.py
-  ├── preprocess_deep.py
-  ├── regression_models/
-  │   ├── linear_regression.py
-  │   ├── decision_tree.py
-  │   ├── random_forest.py
-  │   ├── xgboost_model.py
-  ├── deep_models/
-  │   ├── cnn.py
-  │   ├── gru.py
-  │   ├── lstm.py
-  │   ├── cnn_lstm.py
-  ├── main_regression.py
-  ├── main_deep.py
-  ├── README.md
-  └── requirements.txt
-
 🚀 1. Overview
 
 Cellular networks generate large volumes of radio measurements such as RSRP, RSRQ, RSSI, CQI, SNR, and throughput. Predicting downlink throughput instability helps operators:
 
-optimize radio resources
+1. optimize radio resources
 
-detect bad coverage areas
+2. detect bad coverage areas
 
-improve Quality of Service (QoS)
+3. improve Quality of Service (QoS)
 
-support self-optimizing networks
+4. support self-optimizing networks
 
 This project evaluates multiple ML & DL models to determine which architecture best predicts LTE downlink Mbps.
 
@@ -63,42 +44,7 @@ Downloaded automatically through:
 
 from data_loader import load_kaggle_dataset
 
-🧹 4. Preprocessing Steps
-✔ Clean raw LTE measurements
-
-Remove invalid RSRQ values
-
-Drop unused columns
-
-Filter only connected-state samples (State = “D”)
-
-Handle numeric anomalies
-
-✔ Feature Engineering
-
-Distance bands
-
-Speed categories
-
-Lag features (for DL models)
-
-Cyclical time features (Hour/Day sin–cos)
-
-✔ Scaling
-
-ML models → StandardScaler
-
-DL models → MinMaxScaler
-
-✔ Sequence creation (Deep Learning only)
-
-Group by CellID
-
-Create sliding windows of size N
-
-Preserve time order
-
-🤖 5. Models Implemented
+🤖 4. Models Implemented
 Machine Learning Models
 Model	File	Notes
 Linear Regression	linear_regression.py	Baseline
@@ -112,19 +58,14 @@ LSTM	lstm.py	Temporal modeling
 GRU	gru.py	Lighter version of LSTM
 CNN	cnn.py	Extracts spatial features
 CNN–LSTM hybrid	cnn_lstm.py	Spatial + Temporal
-🧠 6. Running Experiments
+
+🧠 5. Running Experiments
 Run classical ML experiments
-python main_regression.py
+python main.py
 
 Run deep learning experiments
 python main_deep.py
 
-
-Each file prints:
-
-MAE
-
-RMSE
 
 R²
 
